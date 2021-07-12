@@ -1,10 +1,11 @@
 package com.company;
 
-import java.util.*;
+import java.util.Iterator;
+import java.util.NoSuchElementException;
 
 public class ArrayCortege<T extends Tuple & Comparable<T>> implements Iterable<T> {
-    T value;
-    T array[];
+
+    private T[] array;
 
     public ArrayCortege(T[] ar) {
         this.array = ar;
@@ -12,8 +13,7 @@ public class ArrayCortege<T extends Tuple & Comparable<T>> implements Iterable<T
 
     public T maxTuple() {
         T m = this.array[0];
-        for (T e: array)
-        {
+        for (T e : array) {
             m = (T) e.max(m);
         }
         return m;
@@ -21,20 +21,19 @@ public class ArrayCortege<T extends Tuple & Comparable<T>> implements Iterable<T
 
     public <N extends T> void setFirstCortege(N n) {
         array[0] = n;
-        value = n;
     }
 
-    public void modify(ArrayCortege<? super KjvCortegeD > c) {
-        KjvCortegeD  b = new KjvCortegeD(3);
+    public void modify(ArrayCortege<? super KjvCortegeD> c) {
+        KjvCortegeD b = new KjvCortegeD(3);
         c.setFirstCortege(b);
     }
 
     public int compareMaxTuple(ArrayCortege<? extends Tuple> aCort) {
-        KjvCortegeD  b = new KjvCortegeD(3);
+        KjvCortegeD b = new KjvCortegeD(3);
 
         T t = maxTuple();
         Tuple tu = aCort.maxTuple();
-        if (t.less(tu)<0)
+        if (t.less(tu) < 0)
             return -1;
         else
             return 1;
@@ -43,9 +42,9 @@ public class ArrayCortege<T extends Tuple & Comparable<T>> implements Iterable<T
 
     @SuppressWarnings("unchecked")
     public T sum() {
-        T s = (T)array[0].myClone();
+        T s = (T) array[0].myClone();
         for (int i = 1; i < array.length; ++i)
-            s = (T)s.plus(array[i]);
+            s = (T) s.plus(array[i]);
         return s;
     }
 
@@ -63,8 +62,7 @@ public class ArrayCortege<T extends Tuple & Comparable<T>> implements Iterable<T
         if (c.maxTuple().less(maxTuple()) < 0) {
             result.setFirst(maxTuple());
             result.setSecond(maxTuple());
-        }
-        else {
+        } else {
             result.setFirst(c.maxTuple());
             result.setSecond(c.maxTuple());
         }
@@ -73,35 +71,40 @@ public class ArrayCortege<T extends Tuple & Comparable<T>> implements Iterable<T
     public ACIterator iterator() {
         return new ACIterator(this);
     }
-    class ACIterator implements Iterator<T> {
-        private ArrayCortege cort;
-        private int index;
-        public ACIterator(ArrayCortege c)
-        {
-            cort = c;
-        }
-        public boolean hasNext()
-        {
-            return (index < cort.array.length);
-        }
-        public void remove() {
-            throw new UnsupportedOperationException();
-        }
-        public T next() {
-            if (!hasNext()) {
-                throw new NoSuchElementException();
-            }
-            T item = (T)cort.array[index];
-            ++index;
-            return item;
-        }
-    }
 
     @Override
     public String toString() {
         StringBuilder s = new StringBuilder();
         for (T item : this)
-            s.append(item + " ");
+            s.append(item).append(" ");
         return s.toString();
+    }
+
+    class ACIterator implements Iterator<T> {
+
+        private final ArrayCortege<T> cort;
+
+        private int index;
+
+        public ACIterator(ArrayCortege<T> c) {
+            cort = c;
+        }
+
+        public boolean hasNext() {
+            return (index < cort.array.length);
+        }
+
+        public void remove() {
+            throw new UnsupportedOperationException();
+        }
+
+        public T next() {
+            if (!hasNext()) {
+                throw new NoSuchElementException();
+            }
+            T item = (T) cort.array[index];
+            ++index;
+            return item;
+        }
     }
 }
